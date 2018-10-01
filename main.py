@@ -20,24 +20,24 @@ class HTTPServerRequestHandler(BaseHTTPRequestHandler):
         print(self.path[1:])
 
         location = self.path[1:]  # get Image Request Location
-        if location == "":
+        if location == "" or location == "favicon.ico":
             self.send_response(200)
 
             # Send headers
             self.send_header('Content-type', 'text/html')
             self.end_headers()
-            self.wfile.write("Please add an image URL after the URL")
+            self.wfile.write(b"Please add an image URL after the URL")
+            return
 
         r = requests.get(location)  # Download Image
-        #  Set up and write file to a BMP
-        im = BytesIO(r.content)
-        image = Image.open(im)
-        png_file = BytesIO(None)
-        image.save(png_file,"png")
-        img = Image.open(png_file)
-        target_ratio = Target_resolution[0] / Target_resolution[1]
 
+        #  Read data to Image object
+        img = Image.open(BytesIO(r.content))
+
+        # Find aspect ratios
+        target_ratio = Target_resolution[0] / Target_resolution[1]
         image_ratio = img.size[0]/img.size[1]
+
         if image_ratio > target_ratio:  # image wider than needed
             #  Set height right then cut extra width
             #  Squish to right height and keep width regular
@@ -70,9 +70,7 @@ class HTTPServerRequestHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'image/png')
         self.end_headers()
 
-        # Send message back to client
-        message = "Hello world!"
-        # Write content as utf-8 data
+        # Send Image Data
         output = BytesIO(None)
         img.save(output,"png")
         self.wfile.write(output.getvalue())
@@ -85,7 +83,6 @@ def run():
     print('starting server...')
 
     # Server settings
-    # Choose port 8080, for port 80, which is normally used for a http server, you need root access
     server_address = ('0.0.0.0', 80)
     httpd = HTTPServer(server_address, HTTPServerRequestHandler)
     print('running server...')

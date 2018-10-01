@@ -1,0 +1,2 @@
+# Bounce Server
+This will take an incoming http request and then return a formatted image at that address to the user.

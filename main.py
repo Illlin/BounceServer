@@ -19,6 +19,7 @@ class HTTPServerRequestHandler(BaseHTTPRequestHandler):
         print("Image: ", end="")
         print(self.path[1:])
 
+
         location = self.path[1:]  # get Image Request Location
         if location == "" or location == "favicon.ico":
             self.send_response(200)
@@ -64,13 +65,18 @@ class HTTPServerRequestHandler(BaseHTTPRequestHandler):
         self.send_response(200)
 
         # Send headers
-        self.send_header('Content-Type', 'image/png')
-        self.end_headers()
+        self.send_header('content-type', 'image/png')
+        self.send_header("accept-ranges", "bytes")
 
         # Send Image Data
         output = BytesIO(None)
         img.save(output, "png")
+
+        self.send_header("content-length", str(len(output.getvalue())))
+        self.end_headers()
         self.wfile.write(output.getvalue())
+
+        print("Done")
         return
 
 

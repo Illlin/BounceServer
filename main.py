@@ -61,19 +61,17 @@ class HTTPServerRequestHandler(BaseHTTPRequestHandler):
                 round(img.size[1] / 2) + Target_resolution[1] / 2,
             ))
 
+        output = BytesIO(None)
+        img.save(output, "png")
         # Send response status code
         self.send_response(200)
 
         # Send headers
         self.send_header('content-type', 'image/png')
         self.send_header("accept-ranges", "bytes")
-
-        # Send Image Data
-        output = BytesIO(None)
-        img.save(output, "png")
-
         self.send_header("content-length", str(len(output.getvalue())))
         self.end_headers()
+
         self.wfile.write(output.getvalue())
 
         print("Done")

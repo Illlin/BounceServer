@@ -64,7 +64,7 @@ class HTTPServerRequestHandler(BaseHTTPRequestHandler):
         self.send_response(200)
 
         # Send headers
-        self.send_header('Content-type', 'image/png')
+        self.send_header('Content-Type', 'image/png')
         self.end_headers()
 
         # Send Image Data

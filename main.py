@@ -1,7 +1,7 @@
+# !/usr/bin/env python3
 #  This program will take a http request and then server a modified image to the client.
 #  Illin 2018
 
-# !/usr/bin/env python
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import requests
@@ -16,7 +16,7 @@ class HTTPServerRequestHandler(BaseHTTPRequestHandler):
 
     # GET
     def do_GET(self):
-        print("Image: ",end="")
+        print("Image: ", end="")
         print(self.path[1:])
 
         location = self.path[1:]  # get Image Request Location
@@ -27,7 +27,6 @@ class HTTPServerRequestHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             self.wfile.write(b"Please add an image URL after the URL")
-            return
 
         r = requests.get(location)  # Download Image
 
@@ -61,8 +60,6 @@ class HTTPServerRequestHandler(BaseHTTPRequestHandler):
                 round(img.size[1] / 2) + Target_resolution[1] / 2,
             ))
 
-
-
         # Send response status code
         self.send_response(200)
 
@@ -72,12 +69,10 @@ class HTTPServerRequestHandler(BaseHTTPRequestHandler):
 
         # Send Image Data
         output = BytesIO(None)
-        img.save(output,"png")
+        img.save(output, "png")
         self.wfile.write(output.getvalue())
         return
 
-def load_png(file):
-    pass
 
 def run():
     print('starting server...')
